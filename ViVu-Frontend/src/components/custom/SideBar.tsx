@@ -1,5 +1,6 @@
 "use client";
-import Logo from "@/assets/ViVu-Logo.png";
+import Logo from "@/assets/Logo.png";
+import LogoName from "@/assets/LogoName.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as React from "react";
 import {
@@ -64,9 +65,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <div className="flex items-center gap-4">
-                <img src={Logo} alt="Logo" className="h-10 w-10" />
-                <div className="font-bold text-lg font-mono">{t("logo")}</div>
+              <div className="flex items-center">
+                <img src={Logo} alt="Logo" className="h-8 w-8" />
+                <img src={LogoName} alt="LogoName" className="w-2/3" />
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

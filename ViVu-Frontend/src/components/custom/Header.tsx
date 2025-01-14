@@ -5,20 +5,27 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import VietnamFlag from "@/assets/vietnam.png";
 import UnitedKingdom from "@/assets/united-kingdom.png";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { SearchDialog } from "./SearchDialog";
 export default function Header() {
   const { t, setLanguage, language } = useLanguage();
   return (
     <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="-ml-1" />
+        <div className="w-24"></div>
       </div>
-      <div>
-        <Button variant="default" className="rounded-full px-10">
-          <Search />
-          {t("input")}
-        </Button>
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div>
+            <Button variant="default" className="rounded-full px-10">
+              <Search />
+              {t("input")}
+            </Button>
+          </div>
+        </DialogTrigger>
+        <SearchDialog />
+      </Dialog>
       <div className="flex items-center gap-4">
         <div className="flex justify-center align-center">
           <Label

@@ -2,4 +2,46 @@
   margin: 0 auto;
   padding: 0;
   text-align: center;
+  scrollbar-width: thin; /* Firefox: làm cho thanh cuộn nhỏ */
+  scrollbar-color: hsl(var(--primary)) transparent; /* Màu thanh cuộn */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px; /* Chiều rộng của thanh cuộn dọc */
+  height: 8px; /* Chiều cao của thanh cuộn ngang */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Nền của thanh cuộn */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary)); /* Màu của thanh cuộn */
+  border-radius: 4px; /* Bo góc cho thanh cuộn */
+  border: 2px solid transparent; /* Tạo hiệu ứng đệm */
+  background-clip: padding-box; /* Đảm bảo thanh cuộn được bo góc mượt */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.7); /* Màu khi di chuột vào */
+}
+
+.my-scrollable-div {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
+}
+
+.my-scrollable-div::-webkit-scrollbar {
+  width: 8px;
+}
+
+.my-scrollable-div::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
 }
