@@ -1,11 +1,13 @@
 package com.vothanhtuyen.vivu_backend.entities;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +22,21 @@ public class Locations {
     private Long id;
     private String name;
     private String description;
-    private String latitudeAndLongitude;
     private String region;
     private String country;
     private Timestamp created_at;
     private Timestamp updated_at;
     private String type;
+
+    @OneToMany(mappedBy = "locations")
+    private Set<Hotels> hotels;
+
+    @OneToMany(mappedBy = "locations")
+    private Set<Places> places;
+
+    @OneToMany(mappedBy = "locations")
+    private Set<LocalFoods> localFoods;
+
+    @OneToMany(mappedBy = "locations")
+    private Set<SuggestCalendar> suggestCalendars;
 }

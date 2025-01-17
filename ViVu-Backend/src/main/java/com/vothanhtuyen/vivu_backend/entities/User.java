@@ -45,4 +45,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<UserPlaces> userPlaces;
+
+    @OneToMany(mappedBy = "user")
+    private Set<SuggestCalendar> suggestCalendars;
 }

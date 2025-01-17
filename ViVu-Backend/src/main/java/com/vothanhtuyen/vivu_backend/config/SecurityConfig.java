@@ -37,14 +37,13 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authz -> authz
                 // Cho phép các yêu cầu tới trang chủ
-                .requestMatchers("/").permitAll()
+                .requestMatchers("/**").permitAll()
                 // Cho phép các yêu cầu OAuth2 và đăng nhập Google
                 .requestMatchers("/oauth2/**", "/o/oauth2/**", "/login/**").permitAll()
                 // Cho phép các endpoint Swagger
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
                 // Cho phép các yêu cầu tới endpoint auth khác
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/students/upload-progress", "/api/upload/progress/**").permitAll()
                 .anyRequest().authenticated() // Mọi request khác yêu cầu xác thực
                 )
                 .exceptionHandling(exception -> exception
