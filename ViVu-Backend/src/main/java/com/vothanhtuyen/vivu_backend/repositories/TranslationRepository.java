@@ -9,5 +9,6 @@ import com.vothanhtuyen.vivu_backend.entities.Translations;
 
 @Repository
 public interface TranslationRepository extends JpaRepository<Translations, Long>{
-    Optional<String> findByTableNameAndColumnNameAndRowIdAndLanguage(String tableName, String columnName, Long rowId, String language);
+    Optional<Translations> findByTableNameAndColumnNameAndRowIdAndLanguage(String tableName, String columnName, Long rowId, String language);
+    Optional<Translations> findByTableNameAndColumnNameAndValue(String tableName, String columnName, String value);
 }

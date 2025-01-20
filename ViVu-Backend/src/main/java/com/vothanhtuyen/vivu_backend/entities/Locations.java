@@ -24,6 +24,7 @@ public class Locations {
     private String description;
     private String region;
     private String country;
+    private String imageUrl;
     private Timestamp created_at;
     private Timestamp updated_at;
     private String type;

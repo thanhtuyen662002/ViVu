@@ -9,19 +9,24 @@ import org.springframework.stereotype.Service;
 
 import com.vothanhtuyen.vivu_backend.dto.LocalFoodResponseDTO;
 import com.vothanhtuyen.vivu_backend.entities.LocalFoods;
+import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.repositories.LocalFoodsRepository;
+import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 
 @Service
 public class LocalFoodServiceImpl implements LocalFoodService {
     private final LocalFoodsRepository localFoodsRepository;
     private final TranslationService translationService;
+    private final ImageService imageService;
     private final String language = "en";
     private final String tableName = "local_foods";
 
-    public LocalFoodServiceImpl(LocalFoodsRepository localFoodsRepository, TranslationService translationService) {
+    public LocalFoodServiceImpl(LocalFoodsRepository localFoodsRepository, TranslationService translationService,
+            ImageService imageService) {
         this.localFoodsRepository = localFoodsRepository;
         this.translationService = translationService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -57,46 +62,7 @@ public class LocalFoodServiceImpl implements LocalFoodService {
     }
 
     @Override
-    public void saveLocalFoodByJSONArray(JSONArray localFoods) {
-        try {
-            for (int i = 0; i < localFoods.length(); i++) {
-                JSONObject localFood = localFoods.getJSONObject(i);
-
-                JSONObject name = localFood.getJSONObject("name");
-                String nameVi = name.getString("vi");
-                String nameEn = name.getString("en");
-
-                JSONObject description = localFood.getJSONObject("description");
-                String descriptionVi = description.getString("vi");
-                String descriptionEn = description.getString("en");
-
-                JSONObject ingredients = localFood.getJSONObject("ingredients");
-                String ingredientsVi = ingredients.getString("vi");
-                String ingredientsEn = ingredients.getString("en");
-
-                JSONObject priceRange = localFood.getJSONObject("price_range");
-                String priceRangeVi = priceRange.getString("vi");
-                String priceRangeEn = priceRange.getString("en");
-
-                LocalFoods newLocalFood = new LocalFoods();
-                newLocalFood.setName(nameVi);
-                newLocalFood.setDescription(descriptionVi);
-                newLocalFood.setIngredients(ingredientsVi);
-                newLocalFood.setPriceRange(priceRangeVi);
-                LocalFoods saveLocalFood = localFoodsRepository.save(newLocalFood);
-                Long localFoodId = saveLocalFood.getId();
-
-                translationService.insertTranslation(tableName, "name", localFoodId, language, nameEn);
-                translationService.insertTranslation(tableName, "description", localFoodId, language, descriptionEn);
-                translationService.insertTranslation(tableName, "ingredients", localFoodId, language, ingredientsEn);
-                translationService.insertTranslation(tableName, "priceRange", localFoodId, language, priceRangeEn);
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    @Override
-    public List<LocalFoodResponseDTO> convertLocalFoodsByJSONArray(JSONArray localFoods) {
+    public List<LocalFoodResponseDTO> convertLocalFoodsByJSONArray(JSONArray localFoods, Locations location) {
         try {
             List<LocalFoodResponseDTO> localFoodResponseDTOs = new ArrayList<>();
             for (int i = 0; i < localFoods.length(); i++) {
@@ -118,6 +84,8 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 String priceRangeVi = priceRange.getString("vi");
                 String priceRangeEn = priceRange.getString("en");
 
+                String imageUrl = imageService.getImage(nameVi);
+
                 LocalFoodResponseDTO localFoodResponseDTO = new LocalFoodResponseDTO();
                 localFoodResponseDTO.setNameVi(nameVi);
                 localFoodResponseDTO.setNameEn(nameEn);
@@ -127,7 +95,23 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 localFoodResponseDTO.setIngredientsEn(ingredientsEn);
                 localFoodResponseDTO.setPriceRangeVi(priceRangeVi);
                 localFoodResponseDTO.setPriceRangeEn(priceRangeEn);
+                localFoodResponseDTO.setImageUrl(imageUrl);
                 localFoodResponseDTOs.add(localFoodResponseDTO);
+
+                LocalFoods newLocalFood = new LocalFoods();
+                newLocalFood.setName(nameVi);
+                newLocalFood.setDescription(descriptionVi);
+                newLocalFood.setIngredients(ingredientsVi);
+                newLocalFood.setPriceRange(priceRangeVi);
+                newLocalFood.setLocations(location);
+                newLocalFood.setImageUrl(imageUrl);
+                LocalFoods saveLocalFood = localFoodsRepository.save(newLocalFood);
+                Long localFoodId = saveLocalFood.getId();
+
+                translationService.insertTranslation(tableName, "name", localFoodId, language, nameEn);
+                translationService.insertTranslation(tableName, "description", localFoodId, language, descriptionEn);
+                translationService.insertTranslation(tableName, "ingredients", localFoodId, language, ingredientsEn);
+                translationService.insertTranslation(tableName, "priceRange", localFoodId, language, priceRangeEn);
             }
             return localFoodResponseDTOs;
         } catch (Exception e) {

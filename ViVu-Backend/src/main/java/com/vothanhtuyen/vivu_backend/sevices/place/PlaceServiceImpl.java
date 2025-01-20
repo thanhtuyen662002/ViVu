@@ -8,20 +8,25 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.vothanhtuyen.vivu_backend.dto.PlaceResponseDTO;
+import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.entities.Places;
 import com.vothanhtuyen.vivu_backend.repositories.PlacesRepository;
+import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 
 @Service
 public class PlaceServiceImpl implements PlaceService {
     private final PlacesRepository placesRepository;
     private final TranslationService translationService;
+    private final ImageService imageService;
     private final String language = "en";
     private final String tableName = "places";
 
-    public PlaceServiceImpl(PlacesRepository placesRepository, TranslationService translationService) {
+    public PlaceServiceImpl(PlacesRepository placesRepository, TranslationService translationService,
+            ImageService imageService) {
         this.placesRepository = placesRepository;
         this.translationService = translationService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -55,40 +60,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public void savePlacesByJSONArray(JSONArray places) {
-        try {
-            for (int i = 0; i < places.length(); i++){
-                JSONObject place = places.getJSONObject(i);
-
-                JSONObject name = place.getJSONObject("name");
-                String nameVi = name.getString("vi");
-                String nameEn = name.getString("en");
-
-                JSONObject description = place.getJSONObject("description");
-                String descriptionVi = description.getString("vi");
-                String descriptionEn = description.getString("en");
-
-                JSONObject note = place.getJSONObject("description");
-                String noteVi = note.getString("vi");
-                String noteEn = note.getString("en");
-
-                Places newPlace = new Places();
-                newPlace.setName(nameVi);
-                newPlace.setDescription(descriptionVi);
-                newPlace.setNote(noteVi);
-                Places savedPlaces = placesRepository.save(newPlace);
-                Long placeId = savedPlaces.getId();
-
-                translationService.insertTranslation(tableName, "name", placeId, language, nameEn);
-                translationService.insertTranslation(tableName, "description", placeId, language, descriptionEn);
-                translationService.insertTranslation(tableName, "note", placeId, language, noteEn);
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    @Override
-    public List<PlaceResponseDTO> convertPlacesByJSONArray(JSONArray places) {
+    public List<PlaceResponseDTO> convertPlacesByJSONArray(JSONArray places, Locations location) {
         try {
             List<PlaceResponseDTO> placeResponseDTOs = new ArrayList<>();
             for (int i = 0; i < places.length(); i++){
@@ -106,6 +78,8 @@ public class PlaceServiceImpl implements PlaceService {
                 String noteVi = note.getString("vi");
                 String noteEn = note.getString("en");
 
+                String imageUrl = imageService.getImage(nameVi);
+
                 PlaceResponseDTO placeResponseDTO = new PlaceResponseDTO();
                 placeResponseDTO.setNameVi(nameVi);
                 placeResponseDTO.setNameEn(nameEn);
@@ -113,7 +87,21 @@ public class PlaceServiceImpl implements PlaceService {
                 placeResponseDTO.setDescriptionEn(descriptionEn);
                 placeResponseDTO.setNoteVi(noteVi);
                 placeResponseDTO.setNoteEn(noteEn);
+                placeResponseDTO.setImageUrl(imageUrl);
                 placeResponseDTOs.add(placeResponseDTO);
+
+                Places newPlace = new Places();
+                newPlace.setName(nameVi);
+                newPlace.setDescription(descriptionVi);
+                newPlace.setNote(noteVi);
+                newPlace.setImageUrl(imageUrl);
+                newPlace.setLocations(location);
+                Places savedPlaces = placesRepository.save(newPlace);
+                Long placeId = savedPlaces.getId();
+
+                translationService.insertTranslation(tableName, "name", placeId, language, nameEn);
+                translationService.insertTranslation(tableName, "description", placeId, language, descriptionEn);
+                translationService.insertTranslation(tableName, "note", placeId, language, noteEn);
             }
             return placeResponseDTOs;
         } catch (Exception e) {

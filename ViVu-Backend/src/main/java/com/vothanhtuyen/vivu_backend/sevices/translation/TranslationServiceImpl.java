@@ -13,9 +13,23 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Override
     public String getTranslation(String tableName, String columnName, Long rowId, String language) {
-        return translationRepository.findByTableNameAndColumnNameAndRowIdAndLanguage(tableName, columnName, rowId, language).get();
+        try {
+            Translations translation = translationRepository.findByTableNameAndColumnNameAndRowIdAndLanguage(tableName, columnName, rowId, language).get();
+            return translation.getValue();
+        } catch (Exception e) {
+        }
+        return null;
     }
 
+    @Override
+    public Long getLocationIdByName(String name) {
+        try {
+            Translations translation = translationRepository.findByTableNameAndColumnNameAndValue("location", "name", name).get();
+            return translation.getRowId();
+        } catch (Exception e) {
+        }
+        return null;
+    }
     @Override
     public void updateTranslation(String tableName, String columnName, Long rowId, String language, String value) {
         throw new UnsupportedOperationException("Unimplemented method 'updateTranslation'");

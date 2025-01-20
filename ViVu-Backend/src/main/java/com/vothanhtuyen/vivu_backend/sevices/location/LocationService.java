@@ -12,6 +12,5 @@ public interface LocationService {
     List<String> getAllNameLocations();
     Locations getLocationByName(String name);
     LocationResponseDTO convertLocation (Locations location);
-    public void saveLocationByJSONObject(JSONObject location);
-    LocationResponseDTO convertLocationDTOByJSONObject(JSONObject location);
+    Locations saveLocationByJSONObject(JSONObject location);
 }

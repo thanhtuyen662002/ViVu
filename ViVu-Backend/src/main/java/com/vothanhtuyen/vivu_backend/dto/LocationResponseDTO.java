@@ -19,6 +19,7 @@ public class LocationResponseDTO {
     String regionEn;
     String countryVi;
     String countryEn;
+    String imageUrl;
     Timestamp created_at;
     Timestamp updated_at;
     String type;

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.vothanhtuyen.vivu_backend.dto.LocationResponseDTO;
 import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.repositories.LocationsRepository;
+import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 import com.vothanhtuyen.vivu_backend.util.Utils;
 
@@ -16,12 +17,15 @@ public class LocationServiceImpl implements LocationService {
     
     private final LocationsRepository locationsRepository;
     private final TranslationService translationService;
+    private final ImageService imageService;
     private final String language = "en";
     private final String tableName = "locations";
 
-    public LocationServiceImpl(LocationsRepository locationsRepository, TranslationService translationService) {
+    public LocationServiceImpl(LocationsRepository locationsRepository, TranslationService translationService,
+            ImageService imageService) {
         this.locationsRepository = locationsRepository;
         this.translationService = translationService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -39,6 +43,7 @@ public class LocationServiceImpl implements LocationService {
                 locationResponseDTO.setRegionEn(translationService.getTranslation(tableName, "region", location.getId(), language));
                 locationResponseDTO.setCountryVi(location.getCountry());
                 locationResponseDTO.setCountryEn(translationService.getTranslation(tableName, "country", location.getId(), language));
+                locationResponseDTO.setImageUrl(location.getImageUrl());
                 locationResponseDTO.setCreated_at(location.getCreated_at());
                 locationResponseDTO.setUpdated_at(location.getUpdated_at());
                 locationResponseDTO.setType(location.getType());
@@ -66,7 +71,18 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Locations getLocationByName(String name) {
         try {
-            return locationsRepository.findByName(name).get();
+            String normalizedName = name.trim();
+
+            Locations location = locationsRepository.findByNameIgnoreCase(normalizedName).get();
+            if (location != null) {
+                return location;
+            }
+
+            Long locationId = translationService.getLocationIdByName(normalizedName);
+            if (locationId != null) {
+                return locationsRepository.findById(locationId).get();
+            }
+            
         } catch (Exception e) {
         }
         return null;
@@ -85,6 +101,7 @@ public class LocationServiceImpl implements LocationService {
             locationResponseDTO.setRegionEn(translationService.getTranslation(tableName, "region", location.getId(), language));
             locationResponseDTO.setCountryVi(location.getCountry());
             locationResponseDTO.setCountryEn(translationService.getTranslation(tableName, "country", location.getId(), language));
+            locationResponseDTO.setImageUrl(location.getImageUrl());
             locationResponseDTO.setCreated_at(location.getCreated_at());
             locationResponseDTO.setUpdated_at(location.getUpdated_at());
             locationResponseDTO.setType(location.getType());
@@ -95,7 +112,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void saveLocationByJSONObject(JSONObject location) {
+    public Locations saveLocationByJSONObject(JSONObject location) {
         try {
             JSONObject name = location.getJSONObject("name");
             String nameVi = name.getString("vi");
@@ -113,11 +130,14 @@ public class LocationServiceImpl implements LocationService {
             String countryVi = country.getString("vi");
             String countryEn = country.getString("en");
 
+            String imageUrl = imageService.getImage(nameVi);
+
             Locations newLocation = new Locations();
             newLocation.setName(nameVi);
             newLocation.setDescription(descriptionVi);
             newLocation.setRegion(regionVi);
             newLocation.setCountry(countryVi);
+            newLocation.setImageUrl(imageUrl);
             newLocation.setCreated_at(Utils.getCurrentTime());
             Locations savedLocation = locationsRepository.save(newLocation);
             Long locationId = savedLocation.getId();
@@ -126,39 +146,8 @@ public class LocationServiceImpl implements LocationService {
             translationService.insertTranslation(tableName, "description", locationId, language, descriptionEn);
             translationService.insertTranslation(tableName, "region", locationId, language, regionEn);
             translationService.insertTranslation(tableName, "country", locationId, language, countryEn);
-        } catch (Exception e) {
-        }
-    }
 
-    @Override
-    public LocationResponseDTO convertLocationDTOByJSONObject(JSONObject location) {
-        try {
-            JSONObject name = location.getJSONObject("name");
-            String nameVi = name.getString("vi");
-            String nameEn = name.getString("en");
-
-            JSONObject description = location.getJSONObject("description");
-            String descriptionVi = description.getString("vi");
-            String descriptionEn = description.getString("en");
-
-            JSONObject region = location.getJSONObject("region");
-            String regionVi = region.getString("vi");
-            String regionEn = region.getString("en");
-
-            JSONObject country = location.getJSONObject("country");
-            String countryVi = country.getString("vi");
-            String countryEn = country.getString("en");
-
-            LocationResponseDTO locationResponseDTO = new LocationResponseDTO();
-            locationResponseDTO.setNameVi(nameVi);
-            locationResponseDTO.setNameEn(nameEn);
-            locationResponseDTO.setDescriptionVi(descriptionVi);
-            locationResponseDTO.setDescriptionEn(descriptionEn);
-            locationResponseDTO.setRegionVi(regionVi);
-            locationResponseDTO.setRegionEn(regionEn);
-            locationResponseDTO.setCountryVi(countryVi);
-            locationResponseDTO.setCountryEn(countryEn);
-            return locationResponseDTO;
+            return savedLocation;
         } catch (Exception e) {
         }
         return null;

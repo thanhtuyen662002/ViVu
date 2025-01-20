@@ -66,23 +66,20 @@ public class DataServiceImpl implements DataService {
             String aiResponse = aiService.getAIResponse(request);
             JSONObject jsonConvert = new JSONObject(aiResponse);
 
-            JSONObject location = jsonConvert.getJSONObject("location");
+            JSONObject locations = jsonConvert.getJSONObject("locations");
             JSONArray hotels = jsonConvert.getJSONArray("hotels");
             JSONArray places = jsonConvert.getJSONArray("places");
             JSONArray localFoods = jsonConvert.getJSONArray("local_foods");
             JSONObject suggestedCalendar = jsonConvert.getJSONObject("suggested_calendar");
 
-            DataResponseDTO response = new DataResponseDTO();
-            response.setLocation(locationService.convertLocationDTOByJSONObject(location));
-            response.setHotels(hotelService.convertHotelsByJSONArray(hotels));
-            response.setPlaces(placeService.convertPlacesByJSONArray(places));
-            response.setLocalFoods(localFoodService.convertLocalFoodsByJSONArray(localFoods));
-            response.setSuggestedCalendar(suggestCalendarService.convertSuggestedCalendarByJSONObject(suggestedCalendar));
+            Locations location = locationService.saveLocationByJSONObject(locations);
 
-            locationService.saveLocationByJSONObject(location);
-            hotelService.saveHotelsByJSONArray(hotels);
-            placeService.savePlacesByJSONArray(places);
-            localFoodService.saveLocalFoodByJSONArray(localFoods);
+            DataResponseDTO response = new DataResponseDTO();
+            response.setLocation(locationService.convertLocation(location));
+            response.setHotels(hotelService.convertHotelsByJSONArray(hotels, location));
+            response.setPlaces(placeService.convertPlacesByJSONArray(places, location));
+            response.setLocalFoods(localFoodService.convertLocalFoodsByJSONArray(localFoods, location));
+            response.setSuggestedCalendar(suggestCalendarService.convertSuggestedCalendarByJSONObject(suggestedCalendar));
             
             return response;
         } catch (Exception e) {
