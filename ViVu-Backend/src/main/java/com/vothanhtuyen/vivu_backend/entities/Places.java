@@ -26,9 +26,6 @@ public class Places {
     private String note;
     private String imageUrl;
 
-    @OneToMany(mappedBy = "places")
-    private Set<UserPlaces> userPlaces;
-
     @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
     private Locations locations;

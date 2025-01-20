@@ -27,9 +27,6 @@ public class LocalFoods {
     private String ingredients;
     private String priceRange;
 
-    @OneToMany(mappedBy = "localFoods")
-    private Set<UserFoods> userFoods;
-
     @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
     private Locations locations;

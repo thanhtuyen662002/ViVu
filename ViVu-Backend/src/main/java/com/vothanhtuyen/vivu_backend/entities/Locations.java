@@ -37,7 +37,4 @@ public class Locations {
 
     @OneToMany(mappedBy = "locations")
     private Set<LocalFoods> localFoods;
-
-    @OneToMany(mappedBy = "locations")
-    private Set<SuggestCalendar> suggestCalendars;
 }

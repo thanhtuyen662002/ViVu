@@ -29,9 +29,6 @@ public class Hotels {
     private Double rating;
     private String priceRange;
 
-    @OneToMany(mappedBy = "hotels")
-    private Set<UserHotels> userHotels;
-
     @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
     private Locations locations;
