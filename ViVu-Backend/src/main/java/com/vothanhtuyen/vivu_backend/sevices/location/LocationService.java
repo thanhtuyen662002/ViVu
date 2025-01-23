@@ -10,6 +10,7 @@ import com.vothanhtuyen.vivu_backend.entities.Locations;
 public interface LocationService {
     List<LocationResponseDTO> getAllLocations();
     List<String> getAllNameLocations();
+    Locations getLocationById(Long id);
     Locations getLocationByName(String name);
     LocationResponseDTO convertLocation (Locations location);
     Locations saveLocationByJSONObject(JSONObject location);

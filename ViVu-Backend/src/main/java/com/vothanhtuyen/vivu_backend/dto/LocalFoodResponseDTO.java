@@ -18,4 +18,5 @@ public class LocalFoodResponseDTO {
     String ingredientsEn;
     String priceRangeVi;
     String priceRangeEn;
+    String type;
 }

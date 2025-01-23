@@ -45,8 +45,6 @@ public class LocationServiceImpl implements LocationService {
                 locationResponseDTO.setCountryEn(translationService.getTranslation(tableName, "country", location.getId(), language));
                 locationResponseDTO.setImageUrl(location.getImageUrl());
                 locationResponseDTO.setCreated_at(location.getCreated_at());
-                locationResponseDTO.setUpdated_at(location.getUpdated_at());
-                locationResponseDTO.setType(location.getType());
                 return locationResponseDTO;
             }).toList();
         } catch (Exception e) {
@@ -63,6 +61,15 @@ public class LocationServiceImpl implements LocationService {
                 names = List.of(locationResponseDTO.getNameVi(), locationResponseDTO.getNameEn());
             }
             return names;
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    @Override
+    public Locations getLocationById(Long id) {
+        try {
+            return locationsRepository.findById(id).get();
         } catch (Exception e) {
         }
         return null;
@@ -103,8 +110,6 @@ public class LocationServiceImpl implements LocationService {
             locationResponseDTO.setCountryEn(translationService.getTranslation(tableName, "country", location.getId(), language));
             locationResponseDTO.setImageUrl(location.getImageUrl());
             locationResponseDTO.setCreated_at(location.getCreated_at());
-            locationResponseDTO.setUpdated_at(location.getUpdated_at());
-            locationResponseDTO.setType(location.getType());
             return locationResponseDTO;
         } catch (Exception e) {
         }

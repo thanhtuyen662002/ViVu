@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocalFoods {
+public class Eatery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
+    private String address;
     private String imageUrl;
-    private String ingredients;
+    private Double rating;
     private String priceRange;
     private String type;
 

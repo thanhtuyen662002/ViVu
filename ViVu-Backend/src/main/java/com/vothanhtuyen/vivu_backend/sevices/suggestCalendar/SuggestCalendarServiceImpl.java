@@ -4,16 +4,9 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.vothanhtuyen.vivu_backend.dto.SuggestedCalendarResponseDTO;
-import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 
 @Service
 public class SuggestCalendarServiceImpl implements SuggestCalendarService{
-    private final TranslationService translationService;
-
-    public SuggestCalendarServiceImpl(TranslationService translationService) {
-        this.translationService = translationService;
-    }
-
     @Override
     public SuggestedCalendarResponseDTO convertSuggestedCalendarByJSONObject(JSONObject suggestedCalendar) {
         try {

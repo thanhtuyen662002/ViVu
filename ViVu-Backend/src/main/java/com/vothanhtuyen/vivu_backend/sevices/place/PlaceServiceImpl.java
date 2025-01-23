@@ -79,17 +79,7 @@ public class PlaceServiceImpl implements PlaceService {
                 String noteEn = note.getString("en");
 
                 String imageUrl = imageService.getImage(nameVi);
-
-                PlaceResponseDTO placeResponseDTO = new PlaceResponseDTO();
-                placeResponseDTO.setNameVi(nameVi);
-                placeResponseDTO.setNameEn(nameEn);
-                placeResponseDTO.setDescriptionVi(descriptionVi);
-                placeResponseDTO.setDescriptionEn(descriptionEn);
-                placeResponseDTO.setNoteVi(noteVi);
-                placeResponseDTO.setNoteEn(noteEn);
-                placeResponseDTO.setImageUrl(imageUrl);
-                placeResponseDTOs.add(placeResponseDTO);
-
+                
                 Places newPlace = new Places();
                 newPlace.setName(nameVi);
                 newPlace.setDescription(descriptionVi);
@@ -98,6 +88,17 @@ public class PlaceServiceImpl implements PlaceService {
                 newPlace.setLocations(location);
                 Places savedPlaces = placesRepository.save(newPlace);
                 Long placeId = savedPlaces.getId();
+
+                PlaceResponseDTO placeResponseDTO = new PlaceResponseDTO();
+                placeResponseDTO.setId(placeId);
+                placeResponseDTO.setNameVi(nameVi);
+                placeResponseDTO.setNameEn(nameEn);
+                placeResponseDTO.setDescriptionVi(descriptionVi);
+                placeResponseDTO.setDescriptionEn(descriptionEn);
+                placeResponseDTO.setNoteVi(noteVi);
+                placeResponseDTO.setNoteEn(noteEn);
+                placeResponseDTO.setImageUrl(imageUrl);
+                placeResponseDTOs.add(placeResponseDTO);
 
                 translationService.insertTranslation(tableName, "name", placeId, language, nameEn);
                 translationService.insertTranslation(tableName, "description", placeId, language, descriptionEn);

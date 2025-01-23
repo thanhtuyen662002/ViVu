@@ -1,5 +1,7 @@
 package com.vothanhtuyen.vivu_backend.dto;
 
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,11 @@ public class HotelResponseDTO {
     String nameEn;
     String addressVi;
     String addressEn;
-    String amenitiesVi;
-    String amenitiesEn;
-    String contactInfo;
+    Set<String> amenitiesVi;
+    Set<String> amenitiesEn;
     String imageUrl;
     Double rating;
     String priceRangeVi;
     String priceRangeEn;
+    String type;
 }

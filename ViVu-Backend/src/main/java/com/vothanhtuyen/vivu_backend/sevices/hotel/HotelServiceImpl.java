@@ -1,7 +1,9 @@
 package com.vothanhtuyen.vivu_backend.sevices.hotel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,7 +17,7 @@ import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 
 @Service
-public class HotelServiceImpl implements HotelService{
+public class HotelServiceImpl implements HotelService {
     private final HotelsRepository hotelsRepository;
     private final TranslationService translationService;
     private final ImageService imageService;
@@ -42,20 +44,24 @@ public class HotelServiceImpl implements HotelService{
     public List<HotelResponseDTO> getAllHotelsDTOByLocationId(Long locationId) {
         try {
             List<Hotels> hotels = hotelsRepository.findAllByLocationsId(locationId).get();
-            return hotels.stream().map(hotel ->{
+            return hotels.stream().map(hotel -> {
                 HotelResponseDTO hotelResponseDTO = new HotelResponseDTO();
                 hotelResponseDTO.setId(hotel.getId());
                 hotelResponseDTO.setNameVi(hotel.getName());
-                hotelResponseDTO.setNameEn(translationService.getTranslation(tableName, "name", hotel.getId(), language));
+                hotelResponseDTO
+                        .setNameEn(translationService.getTranslation(tableName, "name", hotel.getId(), language));
                 hotelResponseDTO.setAddressVi(hotel.getAddress());
-                hotelResponseDTO.setAddressEn(translationService.getTranslation(tableName, "address", hotel.getId(), language));
-                hotelResponseDTO.setAmenitiesVi(hotel.getAmenities());
-                hotelResponseDTO.setAmenitiesEn(translationService.getTranslation(tableName, "amenities", hotel.getId(), language));
-                hotelResponseDTO.setContactInfo(hotel.getContactInfo());
+                hotelResponseDTO
+                        .setAddressEn(translationService.getTranslation(tableName, "address", hotel.getId(), language));
+                // hotelResponseDTO.setAmenitiesVi(hotel.getAmenities());
+                // hotelResponseDTO.setAmenitiesEn(translationService.getTranslation(tableName,
+                // "amenities", hotel.getId(), language));
                 hotelResponseDTO.setImageUrl(hotel.getImageUrl());
                 hotelResponseDTO.setRating(hotel.getRating());
                 hotelResponseDTO.setPriceRangeVi(hotel.getPriceRange());
-                hotelResponseDTO.setPriceRangeEn(translationService.getTranslation(tableName, "priceRange", hotel.getId(), language));
+                hotelResponseDTO.setPriceRangeEn(
+                        translationService.getTranslation(tableName, "priceRange", hotel.getId(), language));
+                hotelResponseDTO.setType(hotel.getType());
                 return hotelResponseDTO;
             }).toList();
         } catch (Exception e) {
@@ -65,67 +71,93 @@ public class HotelServiceImpl implements HotelService{
 
     @Override
     public List<HotelResponseDTO> convertHotelsByJSONArray(JSONArray hotels, Locations location) {
+        List<HotelResponseDTO> hotelResponseDTOs = new ArrayList<>();
         try {
-            List<HotelResponseDTO> hotelResponseDTOs = new ArrayList<>();
-            for (int i = 0; i < hotels.length(); i++){
+            for (int i = 0; i < hotels.length(); i++) {
                 JSONObject hotel = hotels.getJSONObject(i);
 
-                JSONObject name = hotel.getJSONObject("name");
-                String nameVi = name.getString("vi");
-                String nameEn = name.getString("en");
-                
-                JSONObject address = hotel.getJSONObject("address");
-                String addressVi = address.getString("vi");
-                String addressEn = address.getString("en");
-                
-                JSONObject amenities = hotel.getJSONObject("amenities");
-                JSONArray amenitiesVi = amenities.getJSONArray("vi");
-                JSONArray amenitiesEn = amenities.getJSONArray("en");
-                
-                JSONObject priceRange = hotel.getJSONObject("price_range");
-                String priceRangeVi = priceRange.getString("vi");
-                String priceRangeEn = priceRange.getString("en");
+                // Lấy các trường thông tin từ JSON
+                String nameVi = hotel.getJSONObject("name").getString("vi");
+                String nameEn = hotel.getJSONObject("name").getString("en");
 
-                String contactInfo = hotel.getString("contact_info");
+                String addressVi = hotel.getJSONObject("address").getString("vi");
+                String addressEn = hotel.getJSONObject("address").getString("en");
+
+                JSONArray amenitiesViArray = hotel.getJSONObject("amenities").getJSONArray("vi");
+                JSONArray amenitiesEnArray = hotel.getJSONObject("amenities").getJSONArray("en");
+
+                String priceRangeVi = hotel.getJSONObject("price_range").getString("vi");
+                String priceRangeEn = hotel.getJSONObject("price_range").getString("en");
 
                 double rating = hotel.getDouble("rating");
+                String type = hotel.getString("type");
 
+                // Gọi dịch vụ để lấy URL ảnh
                 String imageUrl = imageService.getImage(nameVi);
 
+                // Chuyển JSONArray amenities sang Set<String>
+                Set<String> amenitiesViSet = jsonArrayToSet(amenitiesViArray);
+                Set<String> amenitiesEnSet = jsonArrayToSet(amenitiesEnArray);
+
+                // Lưu thông tin khách sạn vào database
+                Hotels newHotel = new Hotels();
+                newHotel.setName(nameVi);
+                newHotel.setAddress(addressVi);
+                newHotel.setAmenities(String.join(", ", amenitiesViSet));
+                newHotel.setRating(rating);
+                newHotel.setPriceRange(priceRangeVi);
+                newHotel.setImageUrl(imageUrl);
+                newHotel.setLocations(location);
+                newHotel.setType(type);
+                Hotels savedHotel = hotelsRepository.save(newHotel);
+                Long hotelId = savedHotel.getId();
+
+                // Tạo DTO phản hồi
                 HotelResponseDTO hotelResponseDTO = new HotelResponseDTO();
+                hotelResponseDTO.setId(hotelId);
                 hotelResponseDTO.setNameVi(nameVi);
                 hotelResponseDTO.setNameEn(nameEn);
                 hotelResponseDTO.setAddressVi(addressVi);
                 hotelResponseDTO.setAddressEn(addressEn);
-                hotelResponseDTO.setAmenitiesVi(amenitiesVi.toString());
-                hotelResponseDTO.setAmenitiesEn(amenitiesEn.toString());
-                hotelResponseDTO.setContactInfo(contactInfo);
+                hotelResponseDTO.setAmenitiesVi(amenitiesViSet);
+                hotelResponseDTO.setAmenitiesEn(amenitiesEnSet);
                 hotelResponseDTO.setRating(rating);
                 hotelResponseDTO.setPriceRangeVi(priceRangeVi);
                 hotelResponseDTO.setPriceRangeEn(priceRangeEn);
                 hotelResponseDTO.setImageUrl(imageUrl);
+                hotelResponseDTO.setType(type);
+
+                // Thêm DTO vào danh sách
                 hotelResponseDTOs.add(hotelResponseDTO);
 
-                Hotels newHotels = new Hotels();
-                newHotels.setName(nameVi);
-                newHotels.setAddress(addressVi);
-                newHotels.setAmenities(amenitiesVi.toString());
-                newHotels.setContactInfo(contactInfo);
-                newHotels.setRating(rating);
-                newHotels.setPriceRange(priceRangeVi);
-                newHotels.setImageUrl(imageUrl);
-                newHotels.setLocations(location);
-                Hotels savedHotels = hotelsRepository.save(newHotels);
-                Long hotelId = savedHotels.getId();
-
-                translationService.insertTranslation(tableName, "name", hotelId, language, nameEn);
-                translationService.insertTranslation(tableName, "address", hotelId, language, addressEn);
-                translationService.insertTranslation(tableName, "amenities", hotelId, language, amenitiesEn.toString());
-                translationService.insertTranslation(tableName, "priceRange", hotelId, language, priceRangeEn);
+                // Lưu các bản dịch
+                saveTranslations(hotelId, nameEn, addressEn, amenitiesEnSet, priceRangeEn, type);
             }
-            return hotelResponseDTOs;
         } catch (Exception e) {
+            // Log lỗi để dễ dàng debug
+            System.err.println("Error while converting hotels: " + e.getMessage());
+            e.printStackTrace();
         }
-        return null;
+        return hotelResponseDTOs;
     }
+
+    // Hàm chuyển JSONArray thành Set<String>
+    private Set<String> jsonArrayToSet(JSONArray jsonArray) {
+        Set<String> resultSet = new HashSet<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            resultSet.add(jsonArray.getString(i));
+        }
+        return resultSet;
+    }
+
+    // Hàm lưu bản dịch
+    private void saveTranslations(Long hotelId, String nameEn, String addressEn, Set<String> amenitiesEn,
+            String priceRangeEn, String type) {
+        translationService.insertTranslation("hotels", "name", hotelId, "en", nameEn);
+        translationService.insertTranslation("hotels", "address", hotelId, "en", addressEn);
+        translationService.insertTranslation("hotels", "amenities", hotelId, "en", String.join(", ", amenitiesEn));
+        translationService.insertTranslation("hotels", "priceRange", hotelId, "en", priceRangeEn);
+        translationService.insertTranslation("hotels", "type", hotelId, "en", type);
+    }
+
 }

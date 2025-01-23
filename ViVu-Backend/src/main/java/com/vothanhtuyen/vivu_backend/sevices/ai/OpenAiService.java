@@ -38,7 +38,7 @@ public class OpenAiService {
                 .put("content", userMessage));
 
         requestBody.put("messages", messages);
-        requestBody.put("max_tokens", 2000);
+        requestBody.put("max_tokens", 8000);
         requestBody.put("temperature", 0.7);
 
         // Tạo headers

@@ -26,8 +26,6 @@ public class Locations {
     private String country;
     private String imageUrl;
     private Timestamp created_at;
-    private Timestamp updated_at;
-    private String type;
 
     @OneToMany(mappedBy = "locations")
     private Set<Hotels> hotels;
@@ -37,4 +35,7 @@ public class Locations {
 
     @OneToMany(mappedBy = "locations")
     private Set<LocalFoods> localFoods;
+
+    @OneToMany(mappedBy = "locations")
+    private Set<Eatery> eatery;
 }

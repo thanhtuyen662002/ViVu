@@ -14,5 +14,5 @@ public class DataResponseDTO {
     List<HotelResponseDTO> hotels;
     List<PlaceResponseDTO> places;
     List<LocalFoodResponseDTO> localFoods;
-    SuggestedCalendarResponseDTO suggestedCalendar;
+    List<EateryResponseDTO> eaterys;
 }

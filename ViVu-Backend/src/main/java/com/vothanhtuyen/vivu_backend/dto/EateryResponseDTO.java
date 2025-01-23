@@ -1,7 +1,5 @@
 package com.vothanhtuyen.vivu_backend.dto;
 
-import java.sql.Timestamp;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,16 +7,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationResponseDTO {
+public class EateryResponseDTO {
     Long id;
     String nameVi;
     String nameEn;
-    String descriptionVi;
-    String descriptionEn;
-    String regionVi;
-    String regionEn;
-    String countryVi;
-    String countryEn;
+    String addressVi;
+    String addressEn;
     String imageUrl;
-    Timestamp created_at;
+    Double rating;
+    String priceRangeVi;
+    String priceRangeEn;
+    String type;
 }
