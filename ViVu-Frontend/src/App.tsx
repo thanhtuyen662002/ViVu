@@ -1,13 +1,19 @@
 import "./App.css";
 import { LanguageProvider } from "./contexts/LanguageContext";
-
-import Page from "@/page/Page";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "@/config/routes";
+import Header from "@/components/custom/Header";
+import Footer from "@/components/custom/Footer";
 
 function App() {
   return (
     <div>
       <LanguageProvider>
-        <Page />
+        <Router>
+          <Header />
+          <AppRoutes />
+          <Footer />
+        </Router>
       </LanguageProvider>
     </div>
   );

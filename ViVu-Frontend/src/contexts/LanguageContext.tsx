@@ -33,7 +33,21 @@ const translations = {
     - Food: Vegetarian, reasonable price.
     - Itinerary: Lasts 1 week, including time to rest and explore.`,
     searchButton: "Search",
+    placeToVisit: "Place to visit",
+    placeToVisitDesc: "Information about the place you want to go to.",
+    placeToVisitName: "Location Name",
+    placeToVisitDescription: "Description",
+    placeToVisitNote: "Note",
+    hotelsDesc: "Information about the hotels you can go to.",
     footer: "Copyright of this website belongs to Vo Thanh Tuyen",
+    region: "Region:",
+    country: "Country:",
+    placesTitle: "Places to visit",
+    hotelsTitle: "Hotels, resorts, homestays",
+    eateryTitle: "Restaurants, Eateries",
+    foodTitle: "Local Foods",
+    rating: "Rating: ",
+    type: "Type: ",
   },
   vi: {
     logo: "ViVu Việt Nam",
@@ -63,13 +77,27 @@ const translations = {
     - Món ăn: Đồ chay, giá cả hợp lý.
     - Lịch trình: Kéo dài 1 tuần, bao gồm cả thời gian nghỉ ngơi và khám phá.`,
     searchButton: "Tìm kiếm",
+    placeToVisit: "Địa điểm tham quan",
+    placeToVisitDesc: "Thông tin về địa điểm mà bạn đang muốn đến.",
+    placeToVisitName: "Tên địa điểm",
+    placeToVisitDescription: "Mô tả",
+    placeToVisitNote: "Ghi chú",
+    hotelsDesc: " Thông tin về khách sạn mà bạn có thể muốn đến.",
     footer: "Bản quyền của website này thuộc về Võ Thanh Tuyền",
+    region: "Khu vực:",
+    country: "Đất nước:",
+    placesTitle: "Các địa điểm tham quan",
+    hotelsTitle: "Các khách sạn, resort, homestay",
+    eateryTitle: "Các nhà hàng, quán ăn",
+    foodTitle: "Các món ăn",
+    rating: "Đánh giá: ",
+    type: "Loại: "
   },
 };
 
 // Khởi tạo trạng thái mặc định
 const initialState = {
-  language: "en" as Language,
+  language: "vi" as Language,
   setLanguage: (lang: Language) => {},
   t: (key: string) => "",
 };

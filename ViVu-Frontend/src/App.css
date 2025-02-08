@@ -2,12 +2,13 @@
   margin: 0 auto;
   padding: 0;
   text-align: center;
+  overflow-x: hidden;
   scrollbar-width: thin; /* Firefox: làm cho thanh cuộn nhỏ */
   scrollbar-color: hsl(var(--primary)) transparent; /* Màu thanh cuộn */
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-color);
+  background-color: hsl(var(--primary));
 }
 
 /* Webkit (Chrome, Edge, Safari) */
@@ -28,20 +29,6 @@ body::-webkit-scrollbar-thumb {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.7); /* Màu khi di chuột vào */
-}
-
-.my-scrollable-div {
-  overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.5) transparent;
-}
-
-.my-scrollable-div::-webkit-scrollbar {
-  width: 8px;
-}
-
-.my-scrollable-div::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
+  background-color: hsl(var(--primary)); /* Màu khi di chuột vào */
+  cursor: pointer;
 }
