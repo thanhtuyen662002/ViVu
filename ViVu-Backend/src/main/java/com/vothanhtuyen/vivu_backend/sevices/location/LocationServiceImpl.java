@@ -1,6 +1,8 @@
 package com.vothanhtuyen.vivu_backend.sevices.location;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.vothanhtuyen.vivu_backend.repositories.LocationsRepository;
 import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
 import com.vothanhtuyen.vivu_backend.util.Utils;
+import com.vothanhtuyen.vivu_backend.util.VietnameseNormalizer;
 
 @Service
 public class LocationServiceImpl implements LocationService {
@@ -56,9 +59,9 @@ public class LocationServiceImpl implements LocationService {
     public List<String> getAllNameLocations() {
         try {
             List<LocationResponseDTO> locationResponseDTOs = getAllLocations();
-            List<String> names = null;
+            List<String> names = new ArrayList<>();
             for (LocationResponseDTO locationResponseDTO : locationResponseDTOs) {
-                names = List.of(locationResponseDTO.getNameVi(), locationResponseDTO.getNameEn());
+                names.add(locationResponseDTO.getNameVi());
             }
             return names;
         } catch (Exception e) {
@@ -78,18 +81,11 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Locations getLocationByName(String name) {
         try {
-            String normalizedName = name.trim();
-
-            Locations location = locationsRepository.findByNameIgnoreCase(normalizedName).get();
-            if (location != null) {
-                return location;
+            String normalizedName = VietnameseNormalizer.normalize(name.toLowerCase());
+            Optional<Locations> location = locationsRepository.findByNameNormalized(normalizedName);
+            if (location.isPresent()) {
+                return location.get();
             }
-
-            Long locationId = translationService.getLocationIdByName(normalizedName);
-            if (locationId != null) {
-                return locationsRepository.findById(locationId).get();
-            }
-            
         } catch (Exception e) {
         }
         return null;
@@ -137,8 +133,11 @@ public class LocationServiceImpl implements LocationService {
 
             String imageUrl = imageService.getImage(nameVi);
 
+            String normalizedName = VietnameseNormalizer.normalize(nameVi.trim().toLowerCase());
+
             Locations newLocation = new Locations();
             newLocation.setName(nameVi);
+            newLocation.setNameNormalized(normalizedName);
             newLocation.setDescription(descriptionVi);
             newLocation.setRegion(regionVi);
             newLocation.setCountry(countryVi);

@@ -26,6 +26,7 @@ public class Locations {
     private String country;
     private String imageUrl;
     private Timestamp created_at;
+    private String nameNormalized;
 
     @OneToMany(mappedBy = "locations")
     private Set<Hotels> hotels;

@@ -20,6 +20,7 @@ import com.vothanhtuyen.vivu_backend.sevices.localFood.LocalFoodService;
 import com.vothanhtuyen.vivu_backend.sevices.location.LocationService;
 import com.vothanhtuyen.vivu_backend.sevices.place.PlaceService;
 import com.vothanhtuyen.vivu_backend.sevices.suggestCalendar.SuggestCalendarService;
+import com.vothanhtuyen.vivu_backend.util.VietnameseNormalizer;
 import com.vothanhtuyen.vivu_backend.sevices.eatery.EateryService;
 
 @Service
@@ -49,13 +50,13 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public DataResponseDTO getData(GetDataRequestDTO request) {
+    public DataResponseDTO getData(String name) {
         try {
-            Locations location = locationService.getLocationByName(request.getLocation());
+            Locations location = locationService.getLocationByName(name);
             if (location != null) {
                 return getDataByLocation(location);
             }
-            return getDataByOpenAI(request);
+            return getDataByOpenAI(name);
         } catch (Exception e) {
         }
         return null;
@@ -122,23 +123,25 @@ public class DataServiceImpl implements DataService {
             response.setHotels(hotelService.getAllHotelsDTOByLocationId(location.getId()));
             response.setPlaces(placeService.getAllPlacesDTOByLocationId(location.getId()));
             response.setLocalFoods(localFoodService.getAllLocalFoodsDTOByLocationId(location.getId()));
+            response.setEaterys(eateryService.getAllEaterysDTOByLocationId(location.getId()));
             return response;
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    private DataResponseDTO getDataByOpenAI(GetDataRequestDTO request) {
+    private DataResponseDTO getDataByOpenAI(String request) {
         return getDataByOpenAI(request, 3); // Max 3 retries
     }
 
-    private DataResponseDTO getDataByOpenAI(GetDataRequestDTO request, int retriesLeft) {
+    private DataResponseDTO getDataByOpenAI(String request, int retriesLeft) {
         try {
             if (retriesLeft <= 0) {
                 return null;
             }
 
-            String aiResponse = aiService.getAIResponse(request.getLocation(), aiPromptConfig.getAiPrompt());
+            String aiResponse = aiService.getAIResponse(request, aiPromptConfig.getAiPrompt());
             aiResponse = aiResponse.replace("```json", "");
             if (aiResponse.isEmpty() || aiResponse.isBlank()) {
                 return getDataByOpenAI(request, retriesLeft - 1);
@@ -146,6 +149,13 @@ public class DataServiceImpl implements DataService {
             JSONObject jsonConvert = new JSONObject(aiResponse);
 
             JSONObject locations = jsonConvert.getJSONObject("location");
+            JSONObject name = locations.getJSONObject("name");
+            String nameVi = name.getString("vi");
+            String nameResults = VietnameseNormalizer.normalize(nameVi.trim().toLowerCase());
+            if (nameResults.equals("khongxacdinh") || nameResults.equals("chuaxacdinh")) {
+                return null;
+            }
+
             JSONArray places = jsonConvert.getJSONArray("places");
             JSONArray hotels = jsonConvert.getJSONArray("hotels");
             JSONArray localFoods = jsonConvert.getJSONArray("local_foods");

@@ -21,5 +21,6 @@ public class HotelResponseDTO {
     Double rating;
     String priceRangeVi;
     String priceRangeEn;
-    String type;
+    String typeVi;
+    String typeEn;
 }

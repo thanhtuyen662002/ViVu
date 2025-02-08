@@ -12,11 +12,21 @@ public class ImageServiceImpl implements ImageService{
     @Value("${cx.key}")
     private String CX_KEY;
 
+    @Value("${cx.key2}")
+    private String CX_KEY2;
+
     @Value("${image.key}")
     private String IMAGE_KEY;
 
+    @Value("${image.key2}")
+    private String IMAGE_KEY2;
+
     private String getImageUrl(String name) {
         return "https://www.googleapis.com/customsearch/v1?key=" + IMAGE_KEY + "&cx=" + CX_KEY + "&searchType=image&q=" + name;
+    }
+
+    private String getImageUrl2(String name) {
+        return "https://www.googleapis.com/customsearch/v1?key=" + IMAGE_KEY2 + "&cx=" + CX_KEY2 + "&searchType=image&q=" + name;
     }
 
     @Override
@@ -24,10 +34,14 @@ public class ImageServiceImpl implements ImageService{
         try {
             // Tạo URL cho API request
             String apiUrl = getImageUrl(name);
+            String apiUrl2 = getImageUrl2(name);
 
             // Sử dụng RestTemplate để gửi yêu cầu GET
             RestTemplate restTemplate = new RestTemplate();
             String response = restTemplate.getForObject(apiUrl, String.class);
+            if (response == null) {
+                response = restTemplate.getForObject(apiUrl2, String.class);
+            }
 
             // Parse JSON response
             ObjectMapper objectMapper = new ObjectMapper();
@@ -41,6 +55,7 @@ public class ImageServiceImpl implements ImageService{
                 return imageUrl;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

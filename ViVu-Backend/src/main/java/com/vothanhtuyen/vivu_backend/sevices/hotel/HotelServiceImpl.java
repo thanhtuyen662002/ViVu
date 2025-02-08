@@ -1,6 +1,7 @@
 package com.vothanhtuyen.vivu_backend.sevices.hotel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.repositories.HotelsRepository;
 import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
+import com.vothanhtuyen.vivu_backend.util.Utils;
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -45,6 +47,10 @@ public class HotelServiceImpl implements HotelService {
         try {
             List<Hotels> hotels = hotelsRepository.findAllByLocationsId(locationId).get();
             return hotels.stream().map(hotel -> {
+                Set<String> amenitiesViSet = new HashSet<>(Arrays.asList(hotel.getAmenities().split(",")));
+                Set<String> amenitiesEnSet = new HashSet<>(Arrays.asList(translationService.getTranslation(tableName,
+                        "amenities", hotel.getId(), language).split(",")));
+
                 HotelResponseDTO hotelResponseDTO = new HotelResponseDTO();
                 hotelResponseDTO.setId(hotel.getId());
                 hotelResponseDTO.setNameVi(hotel.getName());
@@ -53,15 +59,15 @@ public class HotelServiceImpl implements HotelService {
                 hotelResponseDTO.setAddressVi(hotel.getAddress());
                 hotelResponseDTO
                         .setAddressEn(translationService.getTranslation(tableName, "address", hotel.getId(), language));
-                // hotelResponseDTO.setAmenitiesVi(hotel.getAmenities());
-                // hotelResponseDTO.setAmenitiesEn(translationService.getTranslation(tableName,
-                // "amenities", hotel.getId(), language));
+                hotelResponseDTO.setAmenitiesVi(amenitiesViSet);
+                hotelResponseDTO.setAmenitiesEn(amenitiesEnSet);
                 hotelResponseDTO.setImageUrl(hotel.getImageUrl());
                 hotelResponseDTO.setRating(hotel.getRating());
                 hotelResponseDTO.setPriceRangeVi(hotel.getPriceRange());
                 hotelResponseDTO.setPriceRangeEn(
                         translationService.getTranslation(tableName, "priceRange", hotel.getId(), language));
-                hotelResponseDTO.setType(hotel.getType());
+                hotelResponseDTO.setTypeVi(hotel.getType());
+                hotelResponseDTO.setTypeEn(translationService.getTranslation(tableName, "type", hotel.getId(), language));
                 return hotelResponseDTO;
             }).toList();
         } catch (Exception e) {
@@ -90,10 +96,12 @@ public class HotelServiceImpl implements HotelService {
                 String priceRangeEn = hotel.getJSONObject("price_range").getString("en");
 
                 double rating = hotel.getDouble("rating");
-                String type = hotel.getString("type");
+
+                String typeVi = Utils.capitalizeFirstLetter(hotel.getString("typeVi"));
+                String typeEn = Utils.capitalizeFirstLetter(hotel.getString("typeEn"));
 
                 // Gọi dịch vụ để lấy URL ảnh
-                String imageUrl = imageService.getImage(nameVi);
+                String imageUrl = imageService.getImage(nameVi + "," + location.getName());
 
                 // Chuyển JSONArray amenities sang Set<String>
                 Set<String> amenitiesViSet = jsonArrayToSet(amenitiesViArray);
@@ -108,7 +116,7 @@ public class HotelServiceImpl implements HotelService {
                 newHotel.setPriceRange(priceRangeVi);
                 newHotel.setImageUrl(imageUrl);
                 newHotel.setLocations(location);
-                newHotel.setType(type);
+                newHotel.setType(typeVi);
                 Hotels savedHotel = hotelsRepository.save(newHotel);
                 Long hotelId = savedHotel.getId();
 
@@ -125,13 +133,14 @@ public class HotelServiceImpl implements HotelService {
                 hotelResponseDTO.setPriceRangeVi(priceRangeVi);
                 hotelResponseDTO.setPriceRangeEn(priceRangeEn);
                 hotelResponseDTO.setImageUrl(imageUrl);
-                hotelResponseDTO.setType(type);
+                hotelResponseDTO.setTypeVi(typeVi);
+                hotelResponseDTO.setTypeEn(typeEn);
 
                 // Thêm DTO vào danh sách
                 hotelResponseDTOs.add(hotelResponseDTO);
 
                 // Lưu các bản dịch
-                saveTranslations(hotelId, nameEn, addressEn, amenitiesEnSet, priceRangeEn, type);
+                saveTranslations(hotelId, nameEn, addressEn, amenitiesEnSet, priceRangeEn, typeEn);
             }
         } catch (Exception e) {
             // Log lỗi để dễ dàng debug

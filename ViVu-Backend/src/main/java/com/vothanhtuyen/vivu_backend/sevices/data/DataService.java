@@ -10,7 +10,7 @@ import com.vothanhtuyen.vivu_backend.dto.PlaceResponseDTO;
 import com.vothanhtuyen.vivu_backend.dto.SuggestedCalendarResponseDTO;
 
 public interface DataService {
-    DataResponseDTO getData(GetDataRequestDTO request);
+    DataResponseDTO getData(String name);
     List<HotelResponseDTO> getMoreHotelsByLocationId(Long locationId);
     List<LocalFoodResponseDTO> getMoreLocalFoodsByLocationId(Long locationId);
     List<PlaceResponseDTO> getMorePlacesByLocationId(Long locationId);

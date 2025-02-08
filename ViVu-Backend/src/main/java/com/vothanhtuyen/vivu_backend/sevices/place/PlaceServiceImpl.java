@@ -78,7 +78,7 @@ public class PlaceServiceImpl implements PlaceService {
                 String noteVi = note.getString("vi");
                 String noteEn = note.getString("en");
 
-                String imageUrl = imageService.getImage(nameVi);
+                String imageUrl = imageService.getImage(nameVi + "," + location.getName());
                 
                 Places newPlace = new Places();
                 newPlace.setName(nameVi);

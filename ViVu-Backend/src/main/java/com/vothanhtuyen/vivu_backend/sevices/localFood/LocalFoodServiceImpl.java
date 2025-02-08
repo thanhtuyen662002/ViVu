@@ -13,6 +13,7 @@ import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.repositories.LocalFoodsRepository;
 import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
+import com.vothanhtuyen.vivu_backend.util.Utils;
 
 @Service
 public class LocalFoodServiceImpl implements LocalFoodService {
@@ -54,7 +55,8 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 localFoodResponseDTO.setPriceRangeVi(localFood.getPriceRange());
                 localFoodResponseDTO.setPriceRangeEn(translationService.getTranslation(tableName, "priceRange", localFood.getId(), language));
                 localFoodResponseDTO.setImageUrl(localFood.getImageUrl());
-                localFoodResponseDTO.setType(localFood.getType());
+                localFoodResponseDTO.setTypeVi(localFood.getType());
+                localFoodResponseDTO.setTypeEn(translationService.getTranslation(tableName, "type", localFood.getId(), language));
                 return localFoodResponseDTO;
             }).toList();
         } catch (Exception e) {
@@ -85,9 +87,10 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 String priceRangeVi = priceRange.getString("vi");
                 String priceRangeEn = priceRange.getString("en");
 
-                String type = localFood.getString("type");
+                String typeVi = Utils.capitalizeFirstLetter(localFood.getString("typeVi"));
+                String typeEn = Utils.capitalizeFirstLetter(localFood.getString("typeEn"));
 
-                String imageUrl = imageService.getImage(nameVi);
+                String imageUrl = imageService.getImage(nameVi + "," + location.getName());
 
                 LocalFoods newLocalFood = new LocalFoods();
                 newLocalFood.setName(nameVi);
@@ -96,7 +99,7 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 newLocalFood.setPriceRange(priceRangeVi);
                 newLocalFood.setLocations(location);
                 newLocalFood.setImageUrl(imageUrl);
-                newLocalFood.setType(type);
+                newLocalFood.setType(typeVi);
                 LocalFoods saveLocalFood = localFoodsRepository.save(newLocalFood);
                 Long localFoodId = saveLocalFood.getId();
 
@@ -111,7 +114,8 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 localFoodResponseDTO.setPriceRangeVi(priceRangeVi);
                 localFoodResponseDTO.setPriceRangeEn(priceRangeEn);
                 localFoodResponseDTO.setImageUrl(imageUrl);
-                localFoodResponseDTO.setType(type);
+                localFoodResponseDTO.setTypeVi(typeVi);
+                localFoodResponseDTO.setTypeEn(typeEn);
                 localFoodResponseDTOs.add(localFoodResponseDTO);
 
 
@@ -119,7 +123,7 @@ public class LocalFoodServiceImpl implements LocalFoodService {
                 translationService.insertTranslation(tableName, "description", localFoodId, language, descriptionEn);
                 translationService.insertTranslation(tableName, "ingredients", localFoodId, language, ingredientsEn);
                 translationService.insertTranslation(tableName, "priceRange", localFoodId, language, priceRangeEn);
-                translationService.insertTranslation(tableName, "type", localFoodId, language, type);
+                translationService.insertTranslation(tableName, "type", localFoodId, language, typeEn);
             }
             return localFoodResponseDTOs;
         } catch (Exception e) {

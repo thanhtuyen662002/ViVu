@@ -13,6 +13,7 @@ import com.vothanhtuyen.vivu_backend.entities.Locations;
 import com.vothanhtuyen.vivu_backend.repositories.EaterysRepository;
 import com.vothanhtuyen.vivu_backend.sevices.image.ImageService;
 import com.vothanhtuyen.vivu_backend.sevices.translation.TranslationService;
+import com.vothanhtuyen.vivu_backend.util.Utils;
 
 @Service
 public class EateryServiceImpl implements EateryService {
@@ -57,7 +58,8 @@ public class EateryServiceImpl implements EateryService {
                 eateryResponseDTO.setPriceRangeVi(eatery.getPriceRange());
                 eateryResponseDTO.setPriceRangeEn(
                         translationService.getTranslation(tableName, "priceRange", eatery.getId(), language));
-                eateryResponseDTO.setType(eatery.getType());
+                eateryResponseDTO.setTypeVi(eatery.getType());
+                eateryResponseDTO.setTypeEn(translationService.getTranslation(tableName, "type", eatery.getId(), language));
                 return eateryResponseDTO;
             }).toList();
         } catch (Exception e) {
@@ -83,10 +85,12 @@ public class EateryServiceImpl implements EateryService {
                 String priceRangeEn = eatery.getJSONObject("price_range").getString("en");
 
                 double rating = eatery.getDouble("rating");
-                String type = eatery.getString("type");
+
+                String typeVi = Utils.capitalizeFirstLetter(eatery.getString("typeVi"));
+                String typeEn = Utils.capitalizeFirstLetter(eatery.getString("typeEn"));
 
                 // Get image URL
-                String imageUrl = imageService.getImage(nameVi);
+                String imageUrl = imageService.getImage(nameVi + "," + location.getName());
 
                 // Save eatery information to database
                 Eatery newEatery = new Eatery();
@@ -96,7 +100,7 @@ public class EateryServiceImpl implements EateryService {
                 newEatery.setPriceRange(priceRangeVi);
                 newEatery.setImageUrl(imageUrl);
                 newEatery.setLocations(location);
-                newEatery.setType(type);
+                newEatery.setType(typeVi);
                 Eatery savedEatery = eaterysRepository.save(newEatery);
                 Long eateryId = savedEatery.getId();
 
@@ -111,13 +115,14 @@ public class EateryServiceImpl implements EateryService {
                 eateryResponseDTO.setPriceRangeVi(priceRangeVi);
                 eateryResponseDTO.setPriceRangeEn(priceRangeEn);
                 eateryResponseDTO.setImageUrl(imageUrl);
-                eateryResponseDTO.setType(type);
+                eateryResponseDTO.setTypeVi(typeVi);
+                eateryResponseDTO.setTypeEn(typeEn);
 
                 // Add DTO to list
                 eateryResponseDTOs.add(eateryResponseDTO);
 
                 // Save translations
-                saveTranslations(eateryId, nameEn, addressEn, priceRangeEn, type);
+                saveTranslations(eateryId, nameEn, addressEn, priceRangeEn, typeEn);
             }
             return eateryResponseDTOs;
         } catch (Exception e) {

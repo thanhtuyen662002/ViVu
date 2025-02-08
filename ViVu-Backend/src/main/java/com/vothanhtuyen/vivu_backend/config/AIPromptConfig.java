@@ -97,7 +97,8 @@ Khi bạn đã tổng hợp thông tin xong, hãy trả về dữ liệu dưới
         "vi": "",
         "en": ""
       },
-      "type": ""
+      "typeVi": "",
+      "typeEn": ""
     }
   ],
   "local_foods": [
@@ -118,7 +119,8 @@ Khi bạn đã tổng hợp thông tin xong, hãy trả về dữ liệu dưới
         "vi": "",
         "en": ""
       },
-      "type": ""
+      "typeVi": "",
+      "typeEn": ""
     }
   ],
   "eaterys": [
@@ -136,7 +138,8 @@ Khi bạn đã tổng hợp thông tin xong, hãy trả về dữ liệu dưới
         "vi": "",
         "en": ""
       },
-      "type": ""
+      "typeVi": "",
+      "typeEn": ""
     }
   ],
 }
