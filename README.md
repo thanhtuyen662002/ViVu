@@ -20,7 +20,7 @@ VIVU is a personal project designed to explore the integration of AI into travel
 ## 🖥️ Demo Screenshots
 
 ### Home Page Vi
-![Home Page Vi]()
+![Home Page Vi](Demo Images/Home Page Vi.png)
 
 ### Home Page En
 ![Home Page En]()
