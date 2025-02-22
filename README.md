@@ -14,6 +14,7 @@ VIVU is a personal project designed to explore the integration of AI into travel
 
 - **Backend:** Java, Spring Boot
 - **Frontend:** Typescript, Tailwind CSS, Shadcn UI
+- **Database:** PostgreSQL
 - **AI Integration:** OpenAI GPT-4o
 - **Search & Cloud Services:** Google Search API, Google Cloud App Engine
 
@@ -50,6 +51,9 @@ VIVU is a personal project designed to explore the integration of AI into travel
 ![Hotels](Demo%20Images/Hotels%20En.png)
 ![Restaurants](Demo%20Images/Restaurants%20En.png)
 ![Foods](Demo%20Images/Foods%20En.png)
+
+### Video Demo
+- **Link Video:** [https://drive.google.com/file/d/1dNl6n_Pic9cNmIJuK7OpiYwl1STfkLbQ/view?usp=sharing](https://drive.google.com/file/d/1dNl6n_Pic9cNmIJuK7OpiYwl1STfkLbQ/view?usp=sharing)
 
 ## 📌 Features
 
