@@ -19,26 +19,37 @@ VIVU is a personal project designed to explore the integration of AI into travel
 
 ## 🖥️ Demo Screenshots
 
+### ERD
+![ERD](Demo%20Images/ERD.png)
+
 ### Home Page Vi
-![Home Page Vi](Demo Images/Home Page Vi.png)
+![Home Page Vi](Demo%20Images/Home%20Page%20Vi.png)
 
 ### Home Page En
-![Home Page En]()
+![Home Page En](Demo%20Images/Home%20Page%20En.png)
 
 ### Search Bar (Already Exist)
-![Search Bar]()
+![Search Bar](Demo%20Images/Locations%20already%20available.png)
 
 ### Search Bar (New Location)
-![Search Bar]()
+![Search Bar](Demo%20Images/New%20location.png)
 
 ### Loading Page
-![Loading Page]()
+![Loading Page](Demo%20Images/Loading.png)
 
 ### Result Page Vi
-![Result Page Vi]()
+![Location](Demo%20Images/Location%20Information%20Vi.png)
+![Places](Demo%20Images/Places%20Vi.png)
+![Hotels](Demo%20Images/Hotels%20Vi.png)
+![Restaurants](Demo%20Images/Restaurants%20Vi.png)
+![Foods](Demo%20Images/Foods%20Vi.png)
 
 ### Result Page En
-![Result Page En]()
+![Location](Demo%20Images/Location%20Information%20En.png)
+![Places](Demo%20Images/Places%20En.png)
+![Hotels](Demo%20Images/Hotels%20En.png)
+![Restaurants](Demo%20Images/Restaurants%20En.png)
+![Foods](Demo%20Images/Foods%20En.png)
 
 ## 📌 Features
 
